@@ -30,3 +30,23 @@ TEST_F(SoundexEncoding, ReplacesMultipleConsonantsWithDigits) {
 	ASSERT_THAT(soundex.encode("Acdl"), Eq("A234"));
 }
 
+TEST_F(SoundexEncoding, LimitsLengthToFourCharacters) {
+	ASSERT_THAT(soundex.encode("Abcdf").length(), Eq(4));
+}
+
+TEST_F(SoundexEncoding, IgnoreVowelLikeLetters) {
+	ASSERT_THAT(soundex.encode("Baeiouhycdl"), Eq("B234"));
+}
+
+TEST_F(SoundexEncoding, CombinesDuplicateEncodings) {
+	ASSERT_THAT(soundex.encode("Abfcgdt"), Eq("A123"));
+}
+
+TEST_F(SoundexEncoding, UppercasesFirstLetter) {
+	ASSERT_THAT(soundex.encode("abcd"), StartsWith("A"));
+}
+
+TEST_F(SoundexEncoding, IgnoresCaseWhenEncodingConsonants) {
+	ASSERT_THAT(soundex.encode("BCDL"), Eq(soundex.encode("Bcdl")));
+}
+

@@ -2,19 +2,43 @@
 #include <unordered_map>
 
 std::string Soundex::encode(const std::string& word) const {
-	return zeroPad(head(word)+encodedDigits(word));
+	return zeroPad(upperFront(head(word))+encodedDigits(tail(word)));
 }
 
 std::string Soundex::head(const std::string& word) const {
 	return word.substr(0, 1);
 }
 
+std::string Soundex::tail(const std::string& word) const {
+	return word.substr(1);
+}
+
+bool Soundex::isComplete(const std::string& word) const {
+	return word.length() == MaxCodeLength - 1;
+}
+
+std::string Soundex::upperFront(const std::string& word) const {
+	return std::string(1, std::toupper(static_cast<unsigned char>(word.front())));
+}
+
+char Soundex::lower(char c) const {
+	return std::tolower(static_cast<unsigned char>(c));
+}
+
 std::string Soundex::encodedDigits(const std::string& word) const {
-	std::string res;
-	for (size_t i = 1; i < word.length(); i++) {
-		res += encodeDigit(word[i]);
+	std::string encoding;
+	for (auto letter : word) {
+		if (isComplete(encoding)) break;
+		auto digit = encodeDigit(letter);
+		if (digit != NotADigit && digit != lastDigit(encoding))
+		encoding += digit;
 	}
-	return res;
+	return encoding;
+}
+
+std::string Soundex::lastDigit(const std::string& word) const {
+	if (word.empty()) return "";
+	return std::string(1, word.back());
 }
 
 std::string Soundex::encodeDigit(char letter) const {
@@ -26,8 +50,8 @@ std::string Soundex::encodeDigit(char letter) const {
 		{'m', "5"}, {'n', "5"},
 		{'r', "6"},
 	};
-	auto res = encodings.find(letter);
-	if (res == encodings.end()) return "";
+	auto res = encodings.find(lower(letter));
+	if (res == encodings.end()) return NotADigit;
 	return res->second;
 }
 
