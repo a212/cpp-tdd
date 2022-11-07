@@ -27,14 +27,30 @@ char Soundex::lower(char c) const {
 
 std::string Soundex::encodedDigits(const std::string& word) const {
 	std::string encoding;
-	encoding += encodeDigit(word.front());
-	for (auto letter : tail(word)) {
-		if (isComplete(encoding)) break;
-		auto digit = encodeDigit(letter);
-		if (digit != NotADigit && digit != lastDigit(encoding))
-		encoding += digit;
-	}
+	encodeHead(encoding, word);
+	encodeTail(encoding, word);
 	return encoding;
+}
+
+void Soundex::encodeHead(std::string& encoding, const std::string& word) const {
+	encoding += encodeDigit(word.front());
+}
+
+void Soundex::encodeTail(std::string& encoding, const std::string& word) const {
+	for (auto i = 1u; i < word.length(); i++)
+		if (!isComplete(encoding))
+			encodeLetter(encoding, word[i], word[i - 1]);
+}
+
+void Soundex::encodeLetter(std::string& encoding, char letter, char lastLetter) const {
+	auto digit = encodeDigit(letter);
+	if (digit != NotADigit && 
+			(isVowel(lastLetter) || digit != lastDigit(encoding)))
+		encoding += digit;
+}
+
+bool Soundex::isVowel(char letter) const {
+	return std::string("aeiouy").find(lower(letter)) != std::string::npos;
 }
 
 std::string Soundex::lastDigit(const std::string& word) const {

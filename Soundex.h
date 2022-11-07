@@ -12,6 +12,10 @@ private:
 	char lower(char c) const;
 	const std::string NotADigit {"*"};
 	std::string encodedDigits(const std::string& word) const;
+	void encodeHead(std::string& encoding, const std::string& word) const;
+	void encodeTail(std::string& encoding, const std::string& word) const;
+	void encodeLetter(std::string& encoding, char letter, char lastLetter) const;
+	bool isVowel(char letter) const;
 	std::string lastDigit(const std::string& word) const;
 	std::string encodeDigit(char letter) const;
 	std::string zeroPad(const std::string& word) const;

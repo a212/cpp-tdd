@@ -54,3 +54,7 @@ TEST_F(SoundexEncoding, CombinesDuplicateCodeWhen2ndLetterDuplicate1st) {
 	ASSERT_THAT(soundex.encode("Bbcd"), Eq("B230"));
 }
 
+TEST_F(SoundexEncoding, DoesNotCombineDuplicateEncodingsSeparatedByVowels) {
+	ASSERT_THAT(soundex.encode("Jbob"), Eq("J110"));
+}
+
